@@ -1,0 +1,40 @@
+# Maintainer: Dave <mail@dave-blair.de>
+# Contributor: boenki <boenki at gmx dot de>
+# Contributor: Max Roder <maxroder@web.de>
+# Contributor: soeren <nonick@posteo.de>
+# Contributor: orgel <orgel0@freenet.de>
+
+pkgname='otr-verwaltungpp-git'
+pkgver='0.0'
+pkgrel='1'
+pkgdesc='Manage your onlinetvrecorder.com files: cut, preview cuts, rate cutlists etc.'
+arch=('any')
+url='http://elbersb.de/otrverwaltung'
+license=('GPL3')
+depends=('pygtk' 'python2-xdg' 'python2-dbus' 'python2-simplejson' 'libtorrent-rasterbar'
+         'gstreamer0.10>='
+         'gstreamer0.10-base' 'gstreamer0.10-base-plugins'
+         'gstreamer0.10-good' 'gstreamer0.10-good-plugins'
+         'gstreamer0.10-gnonlin' 'gstreamer0.10-ffmpeg' 'gstreamer0.10-python'
+         'mplayer' 'aria2' 'wget')
+         
+#'gstreamer0.10-bad' 'gstreamer0.10-bad-plugins'
+#'gstreamer0.10-ugly' 'gstreamer0.10-ugly-plugins'
+
+optdepends=('avidemux-cli:  If you do NOT want to use Smartmkvmerge for divx'
+            'avidemux-qt:   If you do NOT want to use the internal Cutinterface'
+            'wine:          If you want to use virtualdub'
+            'mediainfo-gui: show mediainfo')
+
+makedepends=('python2-distutils-extra')
+source=("git+https://github.com/monarc99/otr-verwaltung.git#branch=master")
+sha256sums=('SKIP')
+
+prepare() {
+   
+}
+
+package() {
+   cd "$srcdir/otr-verwaltung"
+  python2 setup.py install --root=${pkgdir} --optimize=1
+}

@@ -1,0 +1,36 @@
+# Maintainer: gCurse <gcurse[at]web[dot]de>
+
+pkgname=namecoin-core-wallet-bin
+pkgver=0.13.99
+pkgrel=1
+pkgdesc="This package provides the Namecoin Core GUI client and CLI daemon."
+pkgdesc="$pkgdesc This package does not create a systemd service."
+url="https://namecoin.org"
+arch=('x86_64')
+license=('MIT')
+depends=('desktop-file-utils' 'openssl' 'db4.8' 'boost-libs' 'libevent'
+         'qt5-base' 'qt5-tools' 'qrencode' 'protobuf' 'zeromq')
+provides=('namecoin-core-wallet' 'namecoin-cli' 'namecoin-daemon'
+          'namecoin-qt' 'namecoin-tx')
+conflicts=('namecoin-core-wallet' 'namecoin-cli' 'namecoin-daemon'
+           'namecoin-qt' 'namecoin-tx')
+source=("https://namecoin.org/files/namecoin-core-${pkgver}-name-tab-beta1-notreproduced/namecoin-${pkgver}-x86_64-linux-gnu.tar.gz"
+        'namecoin.desktop'
+        'namecoin1500x1500.png')
+sha256sums=('294b1106001d6ea2b9d9ee6a655021ef207a24e8f1dec8efd5899728b3849129'
+            '0226f5a570bbbde63f332d43d9d712287b316c726280f2ae9e21b1b365b3f0dc'
+            'f1e0593b872e18e0aebbf399bb5d77be255cb0aa160964c0528698a33f89ba04')
+
+package() {
+    install -Dm644 "$srcdir/namecoin.desktop" "$pkgdir/usr/share/applications/namecoin.desktop"
+    install -Dm644 "$srcdir/namecoin1500x1500.png" "$pkgdir/usr/share/pixmaps/namecoin1500x1500.png"
+    install -Dm755 "$srcdir/namecoin-${pkgver}/bin/namecoin-qt" "$pkgdir/usr/bin/namecoin-qt"
+    install -Dm755 "$srcdir/namecoin-${pkgver}/bin/namecoind" "$pkgdir/usr/bin/namecoind"
+    install -Dm755 "$srcdir/namecoin-${pkgver}/bin/namecoin-cli" "$pkgdir/usr/bin/namecoin-cli"
+    install -Dm755 "$srcdir/namecoin-${pkgver}/bin/namecoin-tx" "$pkgdir/usr/bin/namecoin-tx"
+    install -Dm644 "$srcdir/namecoin-${pkgver}/include/namecoinconsensus.h" "$pkgdir/usr/include/namecoinconsensus.h"
+    install -Dm644 "$srcdir/namecoin-${pkgver}/lib/libnamecoinconsensus.so.0.0.0" "$pkgdir/usr/lib/libnamecoinconsensus.so.0.0.0"
+    cd "$pkgdir/usr/lib/"
+    ln -s "libnamecoinconsensus.so.0.0.0" "libnamecoinconsensus.so.0"
+    ln -s "libnamecoinconsensus.so.0.0.0" "libnamecoinconsensus.so"
+}
