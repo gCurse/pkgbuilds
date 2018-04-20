@@ -1,0 +1,44 @@
+# Maintainer:  gcurse <gcurse at web de>
+# Contributor: Antonio Rojas <arojas@archlinux.org>
+# Contributor: Sergej Pupykin <pupykin.s+arch@gmail.com>
+# Contributor: Fabian Schoelzel <myfirstname.mylastname@googlemail.com>
+# Contributor: funkyou <spamopfer@nickname.berlin.de>
+# Contributor: tardo <tardo@nagi-fanboi.net>
+# Contributor: Stefan Husmann <stefan-husmann@t-online.de>
+# Contributor: Gustavo Alvarez <sl1pkn07@gmail.com>
+
+pkgname=(mlt-python3-bindings)
+pkgver=6.6.0
+pkgrel=1
+pkgdesc="An open source multimedia framework"
+arch=(x86_64)
+url="http://www.mltframework.org"
+license=(GPL)
+makedepends=(python swig)
+depends=(python mlt)
+source=($pkgname-$pkgver.tar.gz::"https://github.com/mltframework/mlt/archive/v$pkgver.tar.gz")
+sha256sums=('11515546516b3c54719b6b402cacf46e8d5172450d6e9fe2655b237582490315')
+
+prepare() {
+  cd "$srcdir/mlt-$pkgver"
+  # Patch mlt.i for python3
+  patch -p1 -i ../../swigpython3.patch
+}
+
+build() {
+  cd mlt-$pkgver
+  pyincdir=$(python -c "from sysconfig import get_paths; info = get_paths(); print(info['include'])")
+  cd src/swig/python
+  sed -i "s|export PYTHON_INCLUDE.*$|export PYTHON_INCLUDE=${pyincdir}|" build
+  sed -i "s|swig -c++|swig -py3 -c++|" build
+  ./build
+}
+
+package() {
+  pylibdir=$(python -c "from sysconfig import get_paths; info = get_paths(); print(info['stdlib'])")
+  cd "$srcdir/mlt-$pkgver/src/swig/python"
+  mkdir -p "${pkgdir}${pylibdir}/"
+  install -m755 mlt.py "${pkgdir}${pylibdir}/"
+  install -m755 _mlt.so "${pkgdir}${pylibdir}/"
+  install -m755 mlt_wrap.o "${pkgdir}${pylibdir}/"
+}
