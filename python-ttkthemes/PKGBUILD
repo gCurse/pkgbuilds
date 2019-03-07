@@ -1,0 +1,25 @@
+# Maintainer: gcurse <gcurse at web dot de>
+
+pkgname=('python-ttkthemes' 'python2-ttkthemes')
+pkgver=2.3.0
+pkgrel=1
+pkgdesc="A group of themes for the ttk extenstions for Tkinter gathered together by RedFantom and created by various authors."
+_name=ttkthemes
+url="https://github.com/RedFantom/ttkthemes"
+arch=('any')
+license=('GPL3')
+makedepends=('python-setuptools' 'python2-setuptools')
+source=("https://github.com/RedFantom/ttkthemes/archive/${pkgver}.tar.gz")
+sha256sums=('9b4623186b457d81c8ae1295eb31b05518a1de330f2dc6853437be298df2af46')
+options=('!strip')
+
+package_python-ttkthemes() {
+  depends=('tk' 'tkimg' 'python-pillow')
+  cd "${srcdir}/${_name}-${pkgver}"
+  python setup.py install --root="${pkgdir}/" --prefix=/usr  #--optimize=1
+}
+package_python2-ttkthemes() {
+  depends=('tk' 'tkimg' 'python2-pillow')
+  cd "${srcdir}/${_name}-${pkgver}"
+  python2 setup.py install --root="${pkgdir}/" --prefix=/usr  #--optimize=1
+}
