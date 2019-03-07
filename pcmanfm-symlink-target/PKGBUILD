@@ -1,0 +1,28 @@
+# Maintainer: gCurse <gcurse[at]web[dot]de>
+
+pkgname=pcmanfm-symlink-target-module
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="PCManFM or LibFM module to show symlink target in status bar."
+url="https://github.com/ksharindam/pcmanfm-symlink-target-module"
+arch=('x86_64')
+license=('GPLv3')
+depends=('libfm')
+source=("https://github.com/ksharindam/pcmanfm-symlink-target-module/archive/master.zip")
+sha256sums=('85147dff3c4c24a720c8ed985458fd0b48025d3b4966202d8e4b9939fffea58f')
+
+#~ prepare() {
+    #~ cd "${srcdir}/${pkgname}-master"
+    #~ sed -i 's_^LIBDIR.*_LIBDIR = /usr/lib_g' Makefile
+#~ }
+
+build() {
+  cd "${srcdir}/${pkgname}-master"
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-master"
+  mkdir -p "${pkgdir}/usr/lib/libfm/modules"
+  install -D -m644 pcmanfm-symlink-target.so "${pkgdir}/usr/lib/libfm/modules"
+}
