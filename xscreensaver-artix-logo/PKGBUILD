@@ -1,0 +1,60 @@
+# Maintainer: gcurse <gcurse AT web DOT de>
+
+pkgname=xscreensaver-artix-logo
+pkgver=5.43
+pkgrel=1
+pkgdesc='Screen saver and locker for the X Window System with Artixlinux branding'
+url='https://www.jwz.org/xscreensaver/'
+arch=('x86_64')
+license=('BSD')
+depends=('libglade' 'libxmu' 'glu' 'xorg-appres' 'perl-libwww')
+makedepends=('bc' 'intltool' 'libxpm')
+optdepends=('gdm: for login manager support')
+conflicts=('xscreensaver')
+provides=('xscreensaver')
+backup=('etc/pam.d/xscreensaver')
+source=(http://www.jwz.org/xscreensaver/${pkgname%%-*}-${pkgver}.tar.gz
+LICENSE logo-50.xpm logo-180.xpm logo-50.png logo-180.png)
+sha1sums=('7a0e24b224e1316f0a211446db301de1c22daaa0'
+          '3eedb8b91b13c29df9b1fe5cbb027e1470b802d2'
+          '76be688c4bd9d545c66a040f1a0611e910acdfb9'
+          '82b02c8c5f05a971fa986fc1b1bf2715028fd0c0'
+          'a8a42b038855e7dd38deab64232fc2f4410c9b63'
+          '12db0d4946345643f0e743f72a728bb48437ace6')
+prepare() {
+  cd "${pkgname%%-*}-${pkgver}"
+  sed 's|-std=c89||' -i configure.in
+  mv configure.in configure.ac
+  autoreconf -fiv
+}
+
+build() {
+  cd "${pkgname%%-*}-${pkgver}"
+  install -Dm644 "$srcdir"/logo-180.xpm  "${srcdir}"/${pkgname%%-*}-${pkgver}/utils/images/logo-180.xpm
+  install -Dm644 "$srcdir"/logo-50.xpm  "${srcdir}"/${pkgname%%-*}-${pkgver}/utils/images/logo-50.xpm
+    ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --libexecdir=/usr/lib \
+    --with-x-app-defaults=/usr/share/X11/app-defaults \
+    --with-pam \
+    --with-login-manager \
+    --with-gtk \
+    --with-gl \
+    --without-gle \
+    --with-pixbuf \
+    --with-jpeg
+  make
+}
+
+package() {
+  cd "${pkgname%%-*}-${pkgver}"
+  install -d "${pkgdir}/etc/pam.d"
+  make install_prefix="${pkgdir}" install
+  install -Dm 644 ../LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname%%-*}"
+  chmod 755 "${pkgdir}/usr/bin/xscreensaver"
+  echo "NotShowIn=KDE;GNOME;" >> "${pkgdir}/usr/share/applications/xscreensaver-properties.desktop"
+}
+
+# vim: ts=2 sw=2 et:
